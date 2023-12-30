@@ -2,8 +2,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
 import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Paragraph;
 import rst.pdfbox.layout.elements.render.RenderContext;
@@ -51,7 +49,7 @@ public class Listener {
 		String content = String.format("Page %s",
 			renderContext.getPageIndex() + 1);
 		TextFlow text = TextFlowUtil.createTextFlow(content, 11,
-			PDType1Font.TIMES_ROMAN);
+				BaseFont.Times.getPlainFont());
 		float offset = renderContext.getPageFormat().getMarginLeft()
 			+ TextSequenceUtil.getOffset(text,
 				renderContext.getWidth(), Alignment.Right);

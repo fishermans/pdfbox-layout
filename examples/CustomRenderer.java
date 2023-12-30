@@ -3,8 +3,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
 import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Element;
 import rst.pdfbox.layout.elements.HorizontalRuler;
@@ -106,8 +104,7 @@ public class CustomRenderer {
 	public void afterPage(RenderContext renderContext) throws IOException {
 	    String content = String.format("Section %s, Page %s",
 		    sectionNumber, renderContext.getPageIndex() + 1);
-	    TextFlow text = TextFlowUtil.createTextFlow(content, 11,
-		    PDType1Font.TIMES_ROMAN);
+	    TextFlow text = TextFlowUtil.createTextFlow(content, 11, BaseFont.Times.getPlainFont());
 	    float offset = renderContext.getPageFormat().getMarginLeft()
 		    + TextSequenceUtil.getOffset(text,
 			    renderContext.getWidth(), Alignment.Right);

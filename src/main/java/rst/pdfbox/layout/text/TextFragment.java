@@ -9,18 +9,18 @@ import java.awt.Color;
  */
 public interface TextFragment extends Area {
 
-    /**
-     * @return the text.
-     */
-    String getText();
+	/**
+	 * @return the text.
+	 */
+	String getText();
 
-    /**
-     * @return the font and size to use to draw the text.
-     */
-    FontDescriptor getFontDescriptor();
+	/**
+	 * @return the font and size to use to draw the text.
+	 */
+	FontDescriptor getFontDescriptor();
 
-    /**
-     * @return the color to use to draw the text.
-     */
-    Color getColor();
+	/**
+	 * @return the color to use to draw the text.
+	 */
+	Color getColor();
 }

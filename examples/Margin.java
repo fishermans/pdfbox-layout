@@ -1,12 +1,11 @@
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
 import rst.pdfbox.layout.elements.Document;
 import rst.pdfbox.layout.elements.Paragraph;
 import rst.pdfbox.layout.elements.render.VerticalLayoutHint;
 import rst.pdfbox.layout.text.Alignment;
+import rst.pdfbox.layout.text.BaseFont;
 
 public class Margin {
 
@@ -35,17 +34,17 @@ public class Margin {
 
 	Document document = new Document(40, 60, 40, 60);
 	Paragraph paragraph = new Paragraph();
-	paragraph.addText(text1, 11, PDType1Font.HELVETICA);
+	paragraph.addText(text1, 11, BaseFont.Helvetica.getPlainFont());
 	document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 100,
 		100, 100));
 
 	paragraph = new Paragraph();
-	paragraph.addText(text2, 11, PDType1Font.HELVETICA);
+	paragraph.addText(text2, 11, BaseFont.Helvetica.getPlainFont());
 	document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 0, 50,
 		0, 0));
 
 	paragraph = new Paragraph();
-	paragraph.addText(text3, 11, PDType1Font.HELVETICA);
+	paragraph.addText(text3, 11, BaseFont.Helvetica.getPlainFont());
 	document.add(paragraph, new VerticalLayoutHint(Alignment.Right, 150,
 		150, 20, 0));
 

@@ -1,218 +1,207 @@
 package examples;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import rst.pdfbox.layout.util.CompatibilityHelper;
-import rst.pdfbox.layout.util.WordBreakerFactory;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
-import static org.junit.Assert.assertNotNull;
+import javax.imageio.ImageIO;
+
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.IOUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import rst.pdfbox.layout.util.CompatibilityHelper;
+import rst.pdfbox.layout.util.WordBreakerFactory;
 
 public class ExampleTest {
 
-  private File newPdf;
+	static private File newPdf;
 
-  @Before
-  public void setUp() throws Exception {
-    // reset test situation
-    System.clearProperty(WordBreakerFactory.WORD_BREAKER_CLASS_PROPERTY);
-  }
+	@BeforeAll
+	static public void setUp() throws Exception {
+		// reset test situation
+		System.clearProperty(WordBreakerFactory.WORD_BREAKER_CLASS_PROPERTY);
+	}
 
-  @After
-  public void tearDown() throws Exception {
-    if (newPdf != null && newPdf.exists()) {
-      newPdf.deleteOnExit();
-    }
-  }
+	@AfterAll
+	static public void tearDown() throws Exception {
+		if (newPdf != null && newPdf.exists()) {
+			newPdf.deleteOnExit();
+		}
+	}
 
-  @Test
-  public void testAligned() throws Exception {
-    checkExample("Aligned");
-  }
+	@Test
+	public void testAligned() throws Exception {
+		checkExample("Aligned");
+	}
 
-  @Test
-  public void testColumns() throws Exception {
-    checkExample("Columns");
-  }
+	@Test
+	public void testColumns() throws Exception {
+		checkExample("Columns");
+	}
 
-  @Test
-  public void testCustomAnnotation() throws Exception {
-    checkExample("CustomAnnotation");
-  }
+	@Test
+	public void testCustomAnnotation() throws Exception {
+		checkExample("CustomAnnotation");
+	}
 
-  @Test
-  public void testFrames() throws Exception {
-    checkExample("Frames");
-  }
+	@Test
+	public void testFrames() throws Exception {
+		checkExample("Frames");
+	}
 
-  @Test
-  public void testHelloDoc() throws Exception {
-    checkExample("HelloDoc");
-  }
+	@Test
+	public void testHelloDoc() throws Exception {
+		checkExample("HelloDoc");
+	}
 
-  @Test
-  public void testIndentation() throws Exception {
-    checkExample("Indentation");
-  }
+	@Test
+	public void testIndentation() throws Exception {
+		checkExample("Indentation");
+	}
 
-  @Test
-  public void testLandscape() throws Exception {
-    checkExample("Landscape");
-  }
+	@Test
+	public void testLandscape() throws Exception {
+		checkExample("Landscape");
+	}
 
-  @Test
-  public void testLetter() throws Exception {
-    checkExample("Letter");
-  }
+	@Test
+	public void testLetter() throws Exception {
+		checkExample("Letter");
+	}
 
-  @Test
-  public void testLineSpacing() throws Exception {
-    checkExample("LineSpacing");
-  }
+	@Test
+	public void testLineSpacing() throws Exception {
+		checkExample("LineSpacing");
+	}
 
-  @Test
-  public void testLinks() throws Exception {
-    checkExample("Links");
-  }
+	@Test
+	public void testLinks() throws Exception {
+		checkExample("Links");
+	}
 
-  @Test
-  public void testListener() throws Exception {
-    checkExample("Listener");
-  }
+	@Test
+	public void testListener() throws Exception {
+		checkExample("Listener");
+	}
 
-  @Test
-  public void testLowLevelText() throws Exception {
-    checkExample("LowLevelText");
-  }
+	@Test
+	public void testLowLevelText() throws Exception {
+		checkExample("LowLevelText");
+	}
 
-  @Test
-  public void testMargin() throws Exception {
-    checkExample("Margin");
-  }
+	@Test
+	public void testMargin() throws Exception {
+		checkExample("Margin");
+	}
 
-  @Test
-  public void testMarkup() throws Exception {
-    checkExample("Markup");
-  }
+	@Test
+	public void testMarkup() throws Exception {
+		checkExample("Markup");
+	}
 
-  @Test
-  public void testMultiplePages() throws Exception {
-    checkExample("MultiplePages");
-  }
+	@Test
+	public void testMultiplePages() throws Exception {
+		checkExample("MultiplePages");
+	}
 
-  @Test
-  public void testRotation() throws Exception {
-    checkExample("Rotation");
-  }
+	@Test
+	public void testRotation() throws Exception {
+		checkExample("Rotation");
+	}
 
-  public void checkExample(final String example) throws Exception {
-    Class<?> exampleClass = Class.forName(example);
-    Method mainMethod = exampleClass.getDeclaredMethod("main",
-            String[].class);
-    mainMethod.invoke(null, new Object[]{new String[0]});
+	public void checkExample(final String example) throws Exception {
+		Class<?> exampleClass = Class.forName(example);
+		Method mainMethod = exampleClass.getDeclaredMethod("main", String[].class);
+		mainMethod.invoke(null, new Object[] { new String[0] });
 
-    String pdfName = example.toLowerCase() + ".pdf";
-    newPdf = new File("./" + pdfName);
+		String pdfName = example.toLowerCase() + ".pdf";
+		newPdf = new File("./" + pdfName);
 
-    InputStream oldPdf = this.getClass().getResourceAsStream(
-            "/examples/pdf/" + pdfName);
-    assertNotNull(oldPdf);
+		try (InputStream oldPdf = this.getClass().getResourceAsStream("/examples/pdf/" + pdfName)) {
+			assertNotNull(oldPdf);
+			comparePdfs(newPdf, oldPdf);
+		}
+	}
 
-    comparePdfs(newPdf, oldPdf);
+	public static BufferedImage toImage(final PDDocument document, final int pageIndex) throws IOException {
+		return CompatibilityHelper.createImageFromPage(document, pageIndex, 175);
+	}
 
-  }
+	protected static void comparePdfs(final File newPdf, InputStream toCompareTo) throws IOException, AssertionError {
+		
+		byte[] toCompareToBA = IOUtils.toByteArray(toCompareTo);
+	
 
-  public static BufferedImage toImage(final PDDocument document,
-                                      final int pageIndex) throws IOException {
-    return CompatibilityHelper
-            .createImageFromPage(document, pageIndex, 175);
-  }
+		try (PDDocument currentDoc = Loader.loadPDF(newPdf); PDDocument oldDoc = Loader.loadPDF(toCompareToBA)) {
 
-  protected static void comparePdfs(final File newPdf, InputStream toCompareTo)
-          throws IOException, AssertionError {
+			if (currentDoc.getNumberOfPages() != oldDoc.getNumberOfPages()) {
+				throw new AssertionError(String.format("expected %d pages, but is %d", oldDoc.getNumberOfPages(),
+						currentDoc.getNumberOfPages()));
+			}
 
-    try (PDDocument currentDoc = PDDocument.load(newPdf);
-         PDDocument oldDoc = PDDocument.load(toCompareTo)) {
+			for (int i = 0; i < oldDoc.getNumberOfPages(); i++) {
+				BufferedImage currentPageImg = toImage(currentDoc, i);
+				BufferedImage oldPageImg = toImage(oldDoc, i);
+				BufferedImage diff = compareImage(currentPageImg, oldPageImg);
+				if (diff != null) {
+					File diffFile = new File(newPdf.getAbsoluteFile() + ".diff.png");
+					ImageIO.write(diff, "png", diffFile);
+					throw new AssertionError(String.format("page %d different, wrote diff image %s", i + 1, diffFile));
+				}
 
-      if (currentDoc.getNumberOfPages() != oldDoc.getNumberOfPages()) {
-        throw new AssertionError(String.format(
-                "expected %d pages, but is %d",
-                oldDoc.getNumberOfPages(),
-                currentDoc.getNumberOfPages()));
-      }
+			}
+		}
+	}
 
-      for (int i = 0; i < oldDoc.getNumberOfPages(); i++) {
-        BufferedImage currentPageImg = toImage(currentDoc, i);
-        BufferedImage oldPageImg = toImage(oldDoc, i);
-        BufferedImage diff = compareImage(currentPageImg, oldPageImg);
-        if (diff != null) {
-          File diffFile = new File(newPdf.getAbsoluteFile()
-                  + ".diff.png");
-          ImageIO.write(diff, "png", diffFile);
-          throw new AssertionError(String.format(
-                  "page %d different, wrote diff image %s", i + 1,
-                  diffFile));
-        }
+	public static BufferedImage compareImage(final BufferedImage img1, final BufferedImage img2) throws IOException {
 
-      }
-    }
-  }
+		final double colorDistanceTolerance = 0.08;
+		final int w = img1.getWidth();
+		final int h = img1.getHeight();
+		final int[] p1 = img1.getRGB(0, 0, w, h, null, 0, w);
+		final int[] p2 = img2.getRGB(0, 0, w, h, null, 0, w);
+		final BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		boolean foundDiff = false;
 
-  public static BufferedImage compareImage(final BufferedImage img1,
-                                           final BufferedImage img2) throws IOException {
+		if (!(java.util.Arrays.equals(p1, p2))) {
+			for (int i = 0; i < p1.length; i++) {
+				if (normalizedRgbDistance(p1[i], p2[i]) > colorDistanceTolerance) {
+					foundDiff = true;
+					p1[i] = Color.red.getRGB();
+				}
+			}
+			out.setRGB(0, 0, w, h, p1, 0, w);
+		}
 
-    final double colorDistanceTolerance = 0.08;
-    final int w = img1.getWidth();
-    final int h = img1.getHeight();
-    final int[] p1 = img1.getRGB(0, 0, w, h, null, 0, w);
-    final int[] p2 = img2.getRGB(0, 0, w, h, null, 0, w);
-    final BufferedImage out = new BufferedImage(w, h,
-            BufferedImage.TYPE_INT_ARGB);
-    boolean foundDiff = false;
+		if (foundDiff)
+			return out;
 
-    if (!(java.util.Arrays.equals(p1, p2))) {
-      for (int i = 0; i < p1.length; i++) {
-        if (normalizedRgbDistance(p1[i], p2[i]) > colorDistanceTolerance) {
-          foundDiff = true;
-          p1[i] = Color.red.getRGB();
-        }
-      }
-      out.setRGB(0, 0, w, h, p1, 0, w);
-    }
+		return null;
+	}
 
-    if (foundDiff) return out;
+	private static double normalizedRgbDistance(int one, int other) {
+		return normalizedDistance(new Color(one), new Color(other));
+	}
 
-    return null;
-  }
+	private static double normalizedDistance(Color one, Color other) {
+		int distanceR = one.getRed() - other.getRed();
+		int distanceG = one.getGreen() - other.getGreen();
+		int distanceB = one.getBlue() - other.getBlue();
 
+		double distance = Math.sqrt((double) (distanceR * distanceR + distanceG * distanceG + distanceB * distanceB));
 
-  private static double normalizedRgbDistance(int one, int other) {
-    return normalizedDistance(new Color(one), new Color(other));
-  }
+		return distance / MAX_VECTOR_LENGTH;
+	}
 
-  private static double normalizedDistance(Color one, Color other) {
-    int distanceR = one.getRed() - other.getRed();
-    int distanceG = one.getGreen() - other.getGreen();
-    int distanceB = one.getBlue() - other.getBlue();
-
-    double distance = Math.sqrt((double) (distanceR * distanceR +
-            distanceG * distanceG +
-            distanceB * distanceB));
-
-    return distance / MAX_VECTOR_LENGTH;
-  }
-
-
-  private static final double MAX_VECTOR_LENGTH = Math.sqrt(3.0 * 255.0 * 255.0);
+	private static final double MAX_VECTOR_LENGTH = Math.sqrt(3.0 * 255.0 * 255.0);
 
 }
-

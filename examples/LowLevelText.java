@@ -5,8 +5,8 @@ import java.io.OutputStream;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 
 import rst.pdfbox.layout.shape.RoundRect;
 import rst.pdfbox.layout.shape.Shape;
@@ -31,10 +31,10 @@ public class LowLevelText {
 	float pageHeight = page.getMediaBox().getHeight();
 	
 	test.addPage(page);
-	final PDPageContentStream contentStream = new PDPageContentStream(test, page,
+	final PDPageContentStream contentStream = new PDPageContentStream(test, page,  AppendMode.APPEND,
 		true, true);
 
-	// AnnotationDrawListener is only needed if you use annoation based stuff, e.g. hyperlinks
+	// AnnotationDrawListener is only needed if you use annotation based stuff, e.g. hyperlinks
 	AnnotationDrawListener annotationDrawListener = new AnnotationDrawListener(new DrawContext() {
 
 	    @Override
@@ -60,9 +60,9 @@ public class LowLevelText {
 			"Hello *bold _italic bold-end* italic-end_. Eirmod\ntempor invidunt ut \\*labore",
 			11, BaseFont.Times);
 
-	text.addText("Spongebob", 11, PDType1Font.COURIER);
-	text.addText(" is ", 20, PDType1Font.HELVETICA_BOLD_OBLIQUE);
-	text.addText("cool", 7, PDType1Font.HELVETICA);
+	text.addText("Spongebob", 11, BaseFont.Courier.getPlainFont());
+	text.addText(" is ", 20, BaseFont.Helvetica.getBoldItalicFont());
+	text.addText("cool", 7, BaseFont.Helvetica.getPlainFont());
 
 	text.setMaxWidth(100);
 	float xOffset = TextSequenceUtil.getOffset(text, pageWidth,

@@ -24,83 +24,74 @@ import rst.pdfbox.layout.text.Position;
  */
 public class AnnotationDrawListener implements DrawListener, RenderListener {
 
-    private final DrawContext drawContext;
-    private final Iterable<AnnotationProcessor> annotationProcessors;
+	private final DrawContext drawContext;
+	private final Iterable<AnnotationProcessor> annotationProcessors;
 
-    /**
-     * Creates an AnnotationDrawListener with the given {@link DrawContext}.
-     * 
-     * @param drawContext
-     *            the context which provides the {@link PDDocument} and the
-     *            {@link PDPage} currently drawn to.
-     */
-    public AnnotationDrawListener(final DrawContext drawContext) {
-	this.drawContext = drawContext;
-	annotationProcessors = AnnotationProcessorFactory
-		.createAnnotationProcessors();
-    }
-
-    @Override
-    public void drawn(Object drawnObject, Position upperLeft, float width,
-	    float height) {
-	if (!(drawnObject instanceof Annotated)) {
-	    return;
+	/**
+	 * Creates an AnnotationDrawListener with the given {@link DrawContext}.
+	 * 
+	 * @param drawContext the context which provides the {@link PDDocument} and the
+	 *                    {@link PDPage} currently drawn to.
+	 */
+	public AnnotationDrawListener(final DrawContext drawContext) {
+		this.drawContext = drawContext;
+		annotationProcessors = AnnotationProcessorFactory.createAnnotationProcessors();
 	}
-	for (AnnotationProcessor annotationProcessor : annotationProcessors) {
-	    try {
-		annotationProcessor.annotatedObjectDrawn(
-			(Annotated) drawnObject, drawContext, upperLeft, width,
-			height);
-	    } catch (IOException e) {
-		throw new RuntimeException(
-			"exception on annotation processing", e);
-	    }
-	}
-    }
 
-    /**
-     * @deprecated user {@link #afterRender()} instead.
-     * @throws IOException by pdfbox.
-     */
-    @Deprecated
-    public void finalizeAnnotations() throws IOException {
-	afterRender();
-    }
-    
-    @Override
-    public void beforePage(RenderContext renderContext) throws IOException {
-	for (AnnotationProcessor annotationProcessor : annotationProcessors) {
-	    try {
-		annotationProcessor.beforePage(drawContext);
-	    } catch (IOException e) {
-		throw new RuntimeException(
-			"exception on annotation processing", e);
-	    }
+	@Override
+	public void drawn(Object drawnObject, Position upperLeft, float width, float height) {
+		if (!(drawnObject instanceof Annotated)) {
+			return;
+		}
+		for (AnnotationProcessor annotationProcessor : annotationProcessors) {
+			try {
+				annotationProcessor.annotatedObjectDrawn((Annotated) drawnObject, drawContext, upperLeft, width,
+						height);
+			} catch (IOException e) {
+				throw new RuntimeException("exception on annotation processing", e);
+			}
+		}
 	}
-    }
 
-    @Override
-    public void afterPage(RenderContext renderContext) throws IOException {
-	for (AnnotationProcessor annotationProcessor : annotationProcessors) {
-	    try {
-		annotationProcessor.afterPage(drawContext);
-	    } catch (IOException e) {
-		throw new RuntimeException(
-			"exception on annotation processing", e);
-	    }
+	/**
+	 * @deprecated user {@link #afterRender()} instead.
+	 * @throws IOException by pdfbox.
+	 */
+	@Deprecated
+	public void finalizeAnnotations() throws IOException {
+		afterRender();
 	}
-    }
 
-
-    public void afterRender() throws IOException {
-	for (AnnotationProcessor annotationProcessor : annotationProcessors) {
-	    try {
-		annotationProcessor.afterRender(drawContext.getPdDocument());
-	    } catch (IOException e) {
-		throw new RuntimeException(
-			"exception on annotation processing", e);
-	    }
+	@Override
+	public void beforePage(RenderContext renderContext) throws IOException {
+		for (AnnotationProcessor annotationProcessor : annotationProcessors) {
+			try {
+				annotationProcessor.beforePage(drawContext);
+			} catch (IOException e) {
+				throw new RuntimeException("exception on annotation processing", e);
+			}
+		}
 	}
-    }
+
+	@Override
+	public void afterPage(RenderContext renderContext) throws IOException {
+		for (AnnotationProcessor annotationProcessor : annotationProcessors) {
+			try {
+				annotationProcessor.afterPage(drawContext);
+			} catch (IOException e) {
+				throw new RuntimeException("exception on annotation processing", e);
+			}
+		}
+	}
+
+	public void afterRender() throws IOException {
+		for (AnnotationProcessor annotationProcessor : annotationProcessors) {
+			try {
+				annotationProcessor.afterRender(drawContext.getPdDocument());
+			} catch (IOException e) {
+				throw new RuntimeException("exception on annotation processing", e);
+			}
+		}
+	}
 
 }

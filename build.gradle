@@ -1,16 +1,28 @@
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.1'
+plugins {
+	id "java-library"
+	id "maven-publish"
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
     }
-    dependencies {
-        classpath 'org.dm.gradle:gradle-bundle-plugin:0.8.2'
-    }
+    withJavadocJar()
+    withSourcesJar()
 }
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.apache.pdfbox:pdfbox:3.0.1'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
 
 subprojects {
 
@@ -21,27 +33,11 @@ subprojects {
     }
 
     apply plugin: "java"
-    apply plugin: 'org.dm.bundle'
-    apply plugin: 'maven-publish'
+    apply plugin: "maven-publish"
 
     group = 'com.github.ralfstuckert.pdfbox-layout'
-    version = '1.0.1'
+    version = '3.0.0'
 
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        compile files("build/classes/main")
-        compile files("examples")
-    }
-
-    bundle {
-        instruction 'Export-Package', 'rst.pdfbox.layout.*;-split-package:=merge-first'
-        instruction 'Import-Package', "!rst.pdfbox.layout.*,*"
-        instruction 'Bundle-Name', project.name
-        instruction 'Bundle-SymbolicName', "${project.group}.${project.name}"
-    }
 
     jar {
         sourceCompatibility = '1.8'
@@ -74,6 +70,7 @@ subprojects {
         archives examplesJar
     }
 
+/*
     publishing {
         publications {
             mavenJava(MavenPublication) {
@@ -95,7 +92,7 @@ subprojects {
             }
         }
     }
-
+*/
     task createExamples(description: 'Creates the example pdfs', dependsOn: 'compileExamples') << {
         def oldPdfs = fileTree("examples").include('**/*.pdf')
         oldPdfs.each { file -> file.delete() }

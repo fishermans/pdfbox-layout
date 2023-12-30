@@ -5,13 +5,13 @@ package rst.pdfbox.layout.util;
  */
 public interface Enumerator {
 
-    /**
-     * @return the next enumeration.
-     */
-    String next();
+	/**
+	 * @return the next enumeration.
+	 */
+	String next();
 
-    /**
-     * @return the default separator.
-     */
-    String getDefaultSeperator();
+	/**
+	 * @return the default separator.
+	 */
+	String getDefaultSeperator();
 }
